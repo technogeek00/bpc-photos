@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" type="text/css" href="static/css/semantic.min.css" />
+        <style>
+            .ui.cards {
+                align-items: center;
+            }
+
+            .ui.fluid.input>.incr {
+                border-radius: 0 ;
+                text-align: center;
+            }
+
+            .print.preview {
+                text-align: center;
+            }
+
+            .ui.print.grid>.row {
+                align-items: center;
+            }
+        </style>
+        <script type="text/javascript" src="static/js/quickdraw.js"></script>
+        <script type="text/javascript" src="static/js/index.js"></script>
+    </head>
+    <body>
+        <div class="ui menu">
+            <div class="ui container">
+                <div class="header item">
+                    <img class="logo" src="static/images/bpc-logo.jpg" />
+                    BPC School Photos 2022-2023
+                </div>
+            </div>
+        </div>
+        <div class="ui main text container">
+            <h1 class="ui centered header">Child Name Pictures</h1>
+            <p>
+                Below is a gallery of the photos captured of your little one! What you will see is a low-res preview, to download the high resolution of any imagec click the download button, or to download them all click the download all button. You can also order prints of any picture by clicking the print button on the image to add it to the list. Lower in the page you can select the sizes and counts of the picture order.
+            </p>
+            <h2 class="ui header">Gallery</h2>
+            <div class="ui three cards" data-bind="foreach: images">
+                <div class="card">
+                    <div class="image">
+                        <img data-bind="attr: {src: image.thumb}, event: {click: actions.preview.click}">
+                    </div>
+                    <div class="content">
+                        <div class="center aligned header" data-bind="text: image.name"></div>
+                    </div>
+                    <div class="extra content">
+                        <div class="ui mini two buttons">
+                            <a class="ui basic green compact icon button" target="_blank" data-bind="attr: {href: image.jpeg, download: image.jpeg}">
+                                <i class="download icon"></i> Download
+                            </a>
+                            <button class="ui basic blue compact icon button" data-bind="enable: actions.order.enabled, event: {click: actions.order.click}">
+                                <i class="print icon"></i> Order
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <h2 class="ui header">Order Prints</h2>
+            <div class="ui segments">
+                <div class="ui placeholder segment" data-bind="visible: orderHasItems.not">
+                    <div class="ui icon header">
+                        <i class="print icon"></i>
+                        Select pictures above to get started!
+                    </div>
+                </div>
+
+                <div class="ui attached segment print grid" data-bind="foreach: order">
+                    <div class="row">
+                        <div class="five wide column print preview">
+                            <h3 class="ui header" data-bind="text: image.name"></h3>
+                            <div class="ui small rounded image">
+                                <img data-bind="attr: {src: image.thumb}">
+                            </div>
+                            <div class="ui hidden divider"></div>
+                            <div>
+                                <button class="ui red compact mini button" data-bind="event: {click: actions.remove.click}">
+                                    <i class="trash icon"></i>
+                                    Remove
+                                </button>
+                            </div>
+                        </div>
+                        <div class="eleven wide column">
+                            <table class="ui small compact four column definition table">
+                                <thead>
+                                    <tr class="center aligned">
+                                        <th></th>
+                                        <th>Unit Price</th>
+                                        <th>Quantity</th>
+                                        <th>Total Price</th>
+                                    </tr>
+                                </thead>
+                                <tbody data-bind="foreach: packages">
+                                    <tr>
+                                        <td class="right aligned" data-bind="text: details.name"></td>
+                                        <td class="center aligned" data-bind="text: price"></td>
+                                        <td class="center aligned">
+                                            <div class="ui small buttons">
+                                                <button class="ui compact icon button" data-bind="event: {click: decrease.click}, enable: decrease.enabled">
+                                                    <i class="minus icon"></i>
+                                                </button>
+                                                <button class="ui disabled basic compact button" data-bind="text: quantity"></button>
+                                                <button class="ui compact icon button" data-bind="event: {click: increase.click}, enable: increase.enabled">
+                                                    <i class="plus icon"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                        <td class="right aligned" data-bind="text: total"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div data-bind="with: preview">
+            <div class="ui dimmer modals page transition" data-bind="css: {active: visible}">
+                <div class="ui fullscreen modal transition" data-bind="css: {active: visible}">
+                    <div class="header">Header</div>
+                    <div class="content">
+                        <p>This is content</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,103 @@
+body {
+    margin: 0;
+    padding: 0;
+}
+
+.page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.header {
+    border-bottom: 1px solid black;
+    width: 100vw;
+}
+
+.header-content {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 30px;
+    font-weight: 500;
+    font-size: 1.5em;
+}
+
+.logo {
+    height: 50px;
+    width: 50px;
+    background-image: url('static/images/bpc-logo.jpg');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.main {
+    background: grey;
+    width: 75vw;
+}
+
+.main h1 {
+    text-align: center;
+}
+
+.main p {
+    padding: 0 2vw;
+}
+
+.gallery {
+    width: 100%;
+}
+
+.highlight {
+    background-color: black;
+    padding: 1em;
+    text-align: center;
+}
+
+.highlight img {
+    max-height: 500px;
+}
+
+.thumbstrip {
+    display: flex;
+    flex-direction: row;
+}
+
+.thumbstrip .entry {
+    width: 150px;
+    height: 150px;
+    background: white;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.thumbstrip .entry .thumb {
+    height: 100px;
+}
+
+.thumbstrip .entry .thumb img {
+    height: 100%;
+}
+
+.thumbstrip .actions {
+    display: flex;
+    flex-direction: row;
+}
+
+.thumbstrip .actions .icon {
+    width: 50px;
+    height: 50px;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.icon.download {
+    background-image: url('static/icons/file-arrow-down-solid.svg');
+}
+
+.icon.print {
+    background-image: url('static/icons/print-solid.svg');
+}
