@@ -1,0 +1,6 @@
+bin
+certs
+node_modules
+config/.env
+config/datasources.json
+*:Zone.Identifier

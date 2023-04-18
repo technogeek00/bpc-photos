@@ -1,7 +1,11 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <link rel="stylesheet" type="text/css" href="static/css/semantic.min.css" />
+        <meta charset="utf-8">
+        <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, nositelinksearchbox, noimageindex, notranslate">
+        <title><%= config.text['view.main.header'] %></title>
+        <link rel="icon" type="image/jpeg" href="/static/images/<%= config.icon %>" />
+        <link rel="stylesheet" type="text/css" href="/static/css/semantic.min.css" />
         <style>
             .ui.cards {
                 align-items: center;
@@ -12,6 +16,10 @@
                 text-align: center;
             }
 
+            .ui.main.container {
+                padding-bottom: 2em;
+            }
+
             .print.preview {
                 text-align: center;
             }
@@ -19,26 +27,39 @@
             .ui.print.grid>.row {
                 align-items: center;
             }
+
+            .ui.modal .image.content {
+                justify-content: center;
+            }
+
+            .submission-toast .ui.message {
+                margin-bottom: 1em;
+            }
         </style>
-        <script type="text/javascript" src="static/js/quickdraw.js"></script>
-        <script type="text/javascript" src="static/js/index.js"></script>
     </head>
     <body>
         <div class="ui menu">
             <div class="ui container">
                 <div class="header item">
-                    <img class="logo" src="static/images/bpc-logo.jpg" />
-                    BPC School Photos 2022-2023
+                    <img class="logo" src="/static/images/<%= config.icon %>" />
+                    <%= config.name %>
                 </div>
             </div>
         </div>
         <div class="ui main text container">
-            <h1 class="ui centered header">Child Name Pictures</h1>
+            <h1 class="ui centered header"><%= config.text['view.main.header'] %></h1>
+            <% _.forEach(config.text['view.main.description'], function(paragraph) { %>
             <p>
-                Below is a gallery of the photos captured of your little one! What you will see is a low-res preview, to download the high resolution of any imagec click the download button, or to download them all click the download all button. You can also order prints of any picture by clicking the print button on the image to add it to the list. Lower in the page you can select the sizes and counts of the picture order.
+                <%= paragraph %>
             </p>
-            <h2 class="ui header">Gallery</h2>
-            <div class="ui three cards" data-bind="foreach: images">
+            <% }); %>
+            <h2 class="ui header">
+                <%= config.text['view.gallery.header'] %>
+                <div class="ui right aligned sub header">
+                    <a class="ui green mini button" target="_blank" download data-bind="attr: {href: downloadAll}"><i class="download icon"></i>Download All</a>
+                </div>
+            </h2>
+            <div class="ui three cards" data-bind="foreach: orderableImages">
                 <div class="card">
                     <div class="image">
                         <img data-bind="attr: {src: image.thumb}, event: {click: actions.preview.click}">
@@ -48,7 +69,7 @@
                     </div>
                     <div class="extra content">
                         <div class="ui mini two buttons">
-                            <a class="ui basic green compact icon button" target="_blank" data-bind="attr: {href: image.jpeg, download: image.jpeg}">
+                            <a class="ui basic green compact icon button" target="_blank" download data-bind="attr: {href: image.jpeg}">
                                 <i class="download icon"></i> Download
                             </a>
                             <button class="ui basic blue compact icon button" data-bind="enable: actions.order.enabled, event: {click: actions.order.click}">
@@ -58,16 +79,40 @@
                     </div>
                 </div>
             </div>
-            <h2 class="ui header">Order Prints</h2>
+            <h2 class="ui header"><%= config.text['view.order.header'] %></h2>
+            <% _.forEach(config.text['view.order.description'], function(paragraph) { %>
+            <p>
+                <%= paragraph %>
+            </p>
+            <% }); %>
+
+            <ul>
+            <% _.forEach(config.packages, function(package) { %>
+                <% if(package.type == "collection") { %>
+                <li><%= package.name %> - $<%= package.price %> - <%= package.description %></li>
+                <% } else { %>
+                <li>À la carte <%= package.name %> - $<%= package.price %></li>
+                <% } %>
+            <% }); %>
+            </ul>
+
+            <div class="submission-toast" data-bind="with: submissionToast">
+                <div class="ui left aligned message transition" data-bind="css: {_$: type}, visible: visible">
+                    <i class="close icon" data-bind="event: {click: actions.clear}"></i>
+                    <div class="header" data-bind="text: title"></div>
+                    <pre data-bind="text: message"></pre>
+                </div>
+            </div>
+
             <div class="ui segments">
                 <div class="ui placeholder segment" data-bind="visible: orderHasItems.not">
                     <div class="ui icon header">
-                        <i class="print icon"></i>
-                        Select pictures above to get started!
+                        <i class="shopping cart icon"></i>
+                        <%= config.text['view.order.placeholder'] %>
                     </div>
                 </div>
 
-                <div class="ui attached segment print grid" data-bind="foreach: order">
+                <div class="ui attached segment print grid" data-bind="css: {loading: submitting}, foreach: order">
                     <div class="row">
                         <div class="five wide column print preview">
                             <h3 class="ui header" data-bind="text: image.name"></h3>
@@ -114,18 +159,25 @@
                         </div>
                     </div>
                 </div>
+                <div class="ui segment" data-bind="visible: orderHasItems">
+                    <button class="ui large fluid primary button" data-bind="css: {loading: submitting}, enable: actions.order.enabled, event: {click: actions.order.click}">Submit Order - Total <span data-bind="text: totalPrice"></span></span></button>
+                </div>
             </div>
         </div>
 
         <div data-bind="with: preview">
-            <div class="ui dimmer modals page transition" data-bind="css: {active: visible}">
-                <div class="ui fullscreen modal transition" data-bind="css: {active: visible}">
-                    <div class="header">Header</div>
-                    <div class="content">
-                        <p>This is content</p>
+            <div class="ui dimmer modals page transition" data-bind="css: {active: visible}, event: {click: actions.click}">
+                <div class="ui basic modal transition" data-bind="css: {active: visible}">
+                    <div class="ui huge center aligned header" data-bind="text: name"></div>
+                    <div class="image content">
+                        <img class="ui rounded image" data-bind="attr: {src: source}, css: {loading: loading}, event: {load: actions.loaded, error: actions.errored}" />
                     </div>
                 </div>
+                <div class="ui hidden loader" data-bind="css: {hidden: loading.not}"></div>
             </div>
         </div>
+
+        <script>window.CONFIG = <%= "\<\%- config \%\>" %></script>
+        <script><%= compilation.assets['pages/view.js'].source() %></script>
     </body>
 </html>

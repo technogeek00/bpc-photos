@@ -1,0 +1,78 @@
+{
+    "name": "BPC School Photos 2022-2023",
+    "icon": "bpc-logo.jpg",
+    "text": {
+        "access.header": "Welcome to BPC School Pictures",
+        "access.description": [
+            "The link you clicked to access this page is unique to your student(s), please be careful with who you share it with.",
+            "To access your student's pictures click \"Continue\" below."
+        ],
+        "access.submit": "Continue to Pictures",
+        "view.main.header": "Download and Print Pictures",
+        "view.main.description": [
+            "Here you can preview all images available for your little one! Click any image to see a larger preview.",
+            "All images can be downloaded in high resolution by clicking the \"Download\" button below the image. The full gallery can be downloaded by clicking the \"Download All\" button.",
+            "If you would like to order physical prints, you can do so by clicking the \"Order\" button below the image. This will populate the image in the \"Order Prints\" section below the gallery and allow you to select sizes and quantities of the image to receive, for more details see the \"Order Prints\" section."
+        ],
+        "view.gallery.header": "Gallery",
+        "view.order.header": "Order Prints",
+        "view.order.description": [
+            "You can order professional quality prints of any image in the gallery by clicking \"Order\" under the desired pictures. All pictures will be added to the order cart below and allow you to select the types and quantity of prints.",
+            "Prints are being made available at the cost of materials, paper and ink, and billing will be performed through Jovial. Prints will be sent home with students following one of their class days.",
+            "For this school year the following packages and à la carte print types are available:"
+        ],
+        "view.order.placeholder": "No prints added to cart yet!",
+        "error.header": "Sorry!",
+        "error.description": [
+            "There was an issue accessing the website, please try again.",
+            "If this error persists, please contact me on Basecamp or via email me@zacharycava.com for help."
+        ]
+    },
+    "packages": [
+        {
+            "name": "Collection 1",
+            "type": "collection",
+            "description": "Set of (4) 4x6, (4) 5x7, (2) 8x10, and (8) Wallets",
+            "price": 2.86,
+            "maximum": 1
+        },
+        {
+            "name": "Collection 2",
+            "type": "collection",
+            "description": "Set of (2) 4x6, (2) 5x7, (1) 8x10, and (4) Wallets",
+            "price": 0.97,
+            "maximum": 1
+        },
+        {
+            "name": "Collection 3",
+            "type": "collection",
+            "description": "Set of (1) 4x6, (1) 5x7, and (4) Wallets",
+            "price": 0.29,
+            "maximum": 1
+        },
+        {
+            "name": "4x6",
+            "type": "a-la-carte",
+            "price": 0.11,
+            "maximum": 5
+        },
+        {
+            "name": "5x7",
+            "type": "a-la-carte",
+            "price": 0.17,
+            "maximum": 5
+        },
+        {
+            "name": "8x10",
+            "type": "a-la-carte",
+            "price": 0.41,
+            "maximum": 5
+        },
+        {
+            "name": "Wallets (4)",
+            "type": "a-la-carte",
+            "price": 0.11,
+            "maximum": 5
+        }
+    ]
+}

@@ -1,0 +1,11 @@
+{
+    "compilerOptions": {
+        "noImplicitAny": true,
+        "strictNullChecks": true,
+        "outDir": "./dist/js/",
+        "sourceMap": true,
+        "resolveJsonModule": true,
+        "target": "ES6",
+        "moduleResolution": "nodenext"
+    }
+}

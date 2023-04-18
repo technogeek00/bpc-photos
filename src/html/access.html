@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, nositelinksearchbox, noimageindex, notranslate">
+        <title><%= config.text['access.header'] %></title>
+        <link rel="icon" type="image/jpeg" href="/static/images/<%= config.icon %>" />
+        <link rel="stylesheet" type="text/css" href="/static/css/semantic.min.css" />
+    </head>
+    <body>
+        <div class="ui menu">
+            <div class="ui container">
+                <div class="header item">
+                    <img class="logo" src="/static/images/<%= config.icon %>" />
+                    <%= config.name %>
+                </div>
+            </div>
+        </div>
+        <div class="ui main text container">
+            <h1 class="ui centered header"><%= config.text['access.header'] %></h1>
+            <% _.forEach(config.text['access.description'], function(paragraph) { %>
+            <p>
+                <%= paragraph %>
+            </p>
+            <% }); %>
+            <form class="ui form" method="post" enctype="application/x-www-form-urlencoded">
+                <button class="fluid ui green massive button" type="submit"><%= config.text['access.submit'] %></button>
+                <input type="text" hidden="true" name="token" value="<%= "\<\%= token \%\>" %>">
+            </form>
+        </div>
+        <script><%= compilation.assets['pages/access.js'].source() %></script>
+    </body>
+</html>
