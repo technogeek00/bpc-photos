@@ -330,7 +330,7 @@ try {
     process.exit(1);
 }
 
-let arrangeErrors = await arrangeForServer(subjects.slice(0,1), DIR_EXPORTS, DIR_ARRANGED, excludeGroups);
+let arrangeErrors = await arrangeForServer(subjects, DIR_EXPORTS, DIR_ARRANGED, excludeGroups);
 if(arrangeErrors.length > 0) {
     console.error('Issues when arranging folders');
     arrangeErrors.forEach(({title, issue}) => {
