@@ -11,7 +11,10 @@ declare interface OrderablePackageConfiguration {
 declare interface DatasourcesConfig {
     googlesheet: {
         id: string,
-        range: string,
+        ranges: {
+            information: string,
+            submissions: string
+        },
         auth: any // note we any here as the google auth config is opaque
     },
     images: {

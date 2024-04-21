@@ -65,7 +65,9 @@ The datasource configuration is located in the `config/datasources.json` file an
 |------------|------|-------------|
 | `googlesheet` | `object` | An object containing the googlesheet datasource configurations |
 | `googlesheet.id` | `string` | The object id of the google sheet to interact with |
-| `googlesheet.range` | `string` | The spreadsheet range to post data into in cell notation, ex `"'Sheet 1'!A1:J1"` |
+| `googlesheet.ranges` | `string` | Used spreadsheet ranges in cell notation, ex `"'Sheet 1'!A1:J1"` |
+| `googlesheet.ranges.information` | `string` | Student information, used for preparation scripting |
+| `googlesheet.ranges.submissions` | `string` | Sheet where picture orders will be submitted |
 | `googlesheet.auth` | `object` | An object containing the google api authentication information |
 | `images` | `object` | An object containing the images datasource configurations |
 | `images.directory` | `string` | A local file system path where the subject images are mounted |

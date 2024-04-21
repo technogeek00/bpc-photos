@@ -333,7 +333,7 @@ app.post('/order/:subject', (req, res) => {
 
     sheets.spreadsheets.values.append({
             spreadsheetId: googlesheet.id,
-            range: googlesheet.range,
+            range: googlesheet.ranges.submissions,
             valueInputOption: 'USER_ENTERED',
             requestBody: {
                 values: dataRows
