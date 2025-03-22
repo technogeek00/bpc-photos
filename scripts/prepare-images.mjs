@@ -39,7 +39,7 @@ const require = createRequire(import.meta.url);
 
 if(process.argv.length < 3) {
     console.error('Must provide directory to prepare');
-    console.error(`./perpare-images.js <prep-directory>`)
+    console.error(`./prepare-images.mjs <prep-directory>`)
     process.exit(1);
 }
 
