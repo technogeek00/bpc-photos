@@ -77,6 +77,9 @@ const serverConfig = {
     resolve: {
         extensions: ['.js', '.json', '.ts']
     },
+    optimization: {
+        minimize: false
+    },
     output: {
         filename: '[name].js',
         path: path.resolve(__dirname, 'bin')
