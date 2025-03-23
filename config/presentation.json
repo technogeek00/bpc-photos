@@ -30,27 +30,6 @@
     },
     "packages": [
         {
-            "name": "Collection 1",
-            "type": "collection",
-            "description": "Set of (4) 4x6, (4) 5x7, (2) 8x10, and (8) Wallets",
-            "price": 2.86,
-            "maximum": 1
-        },
-        {
-            "name": "Collection 2",
-            "type": "collection",
-            "description": "Set of (2) 4x6, (2) 5x7, (1) 8x10, and (4) Wallets",
-            "price": 0.97,
-            "maximum": 1
-        },
-        {
-            "name": "Collection 3",
-            "type": "collection",
-            "description": "Set of (1) 4x6, (1) 5x7, and (4) Wallets",
-            "price": 0.29,
-            "maximum": 1
-        },
-        {
             "name": "4x6",
             "type": "a-la-carte",
             "price": 0.11,
