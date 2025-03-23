@@ -1,3 +1,8 @@
+// node lib bits
+import * as path from 'node:path';
+import * as fs from 'node:fs';
+import * as https from 'node:https';
+
 // force prep environment with necessary keys and configurations
 // note that all keys and configuration are loaded at runtime instead of
 // being directly compiled in which means file relativity here is for the
@@ -12,19 +17,14 @@ dotenv.config({ path: path.join(__dirname, 'config', '.env') });
 const DATASOURCES_CONFIG: DatasourcesConfig = JSON.parse(fs.readFileSync(path.join(__dirname, 'config', 'datasources.json')).toString());
 const PRESENTATION_CONFIG: PresentationConfig = JSON.parse(fs.readFileSync(path.join(__dirname, 'config', 'presentation.json')).toString());
 
-// node lib bits
-import * as path from 'node:path';
-import * as fs from 'node:fs';
-import * as https from 'node:https';
-
 // expressjs server components
-import * as express from 'express';
+import { default as express } from 'express';
 import { renderFile as ejsRenderFile } from 'ejs';
 import helmet from 'helmet';
 import { glob } from 'glob';
 import * as bodyParser from 'body-parser';
 import * as jwt from 'jsonwebtoken';
-import * as morgan from 'morgan';
+import { default as morgan } from 'morgan';
 
 // google api components
 import { google } from 'googleapis';

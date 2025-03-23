@@ -9,10 +9,10 @@ import { default as Airtable } from 'airtable';
 import { createRequire } from 'node:module';
 const require = createRequire(import.meta.url);
 
-async function fetchSubjectData() {
-    // download subject information from the airtable
-    let { airtable } = require('../config/datasources');
+// download subject information from the airtable
+let { airtable } = require('../config/datasources');
 
+async function fetchSubjectData() {
     try {
         let base = Airtable.base(airtable.base);
         let records = await base(airtable.table.students.id)
@@ -26,7 +26,7 @@ async function fetchSubjectData() {
                 name: record.fields['Student Full Name'],
                 group: record.fields['Class'],
                 token: record.fields['Token'],
-                record: record
+                record: record.id
             }
         });
     } catch (err) {
@@ -36,6 +36,19 @@ async function fetchSubjectData() {
 
     // failed to fetch
     return null;
+}
+
+async function storeRecordToken(record) {
+    try {
+        let base = Airtable.base(airtable.base);
+        await base.table(airtable.table.students.id)
+            .update(record.record, {
+                "Token": record.token
+            });
+    } catch (err) {
+        console.error('Error thrown while updating token');
+        console.error(err);
+    }
 }
 
 console.log(`[LOADING] Fetching student data`);
@@ -57,7 +70,7 @@ async function generateToken(id) {
     let body = {
         token: process.env.GENERATION_SECRET,
         subject: id,
-        duration: 30 * 24 * 60
+        duration: 45 * 24 * 60 // token valid for 45 days
     };
 
     let response = await fetch(uri, {
@@ -79,19 +92,15 @@ async function generateToken(id) {
     return result.token;
 }
 
-let tokens = [];
 for(let subject of subjects) {
     try {
         console.log(`[GENERATING] ${subject.id} - ${subject.name}`);
-        let token = await generateToken(subject.id);
+        subject.token = await generateToken(subject.id);
         console.log(`[SAVING] ${subject.id} - ${subject.name}`);
-        tokens.push({
-            id: subject.id,
-            token: token
-        });
+        await storeRecordToken(subject);
+        // wait 500ms because airtable rate limit
+        await new Promise(r => setTimeout(r, 500));
     } catch (err) {
         console.error(`    [ERROR] ${err.message}`)
     }
 }
-
-// todo save back to airtable

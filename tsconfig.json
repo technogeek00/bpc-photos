@@ -6,6 +6,7 @@
         "sourceMap": true,
         "resolveJsonModule": true,
         "target": "ES6",
-        "moduleResolution": "nodenext"
+        "moduleResolution": "nodenext",
+        "module": "nodenext"
     }
 }
