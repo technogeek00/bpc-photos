@@ -9,7 +9,7 @@ import * as https from 'node:https';
 // compiled structure which places 'config' as a sibling to the server file.
 // Three configuration sources:
 //  - .env - running PORT and TOKEN secrets, uses environment to allow for easy container override
-//  - datasources.json - configuration for google sheets and local image data
+//  - datasources.json - configuration for airtable and local image data
 //  - presentation.json - configuration for text on site and photo ordering packages
 import * as dotenv from 'dotenv';
 dotenv.config({ path: path.join(__dirname, 'config', '.env') });
@@ -26,8 +26,8 @@ import * as bodyParser from 'body-parser';
 import * as jwt from 'jsonwebtoken';
 import { default as morgan } from 'morgan';
 
-// google api components
-import { google } from 'googleapis';
+// note auth set via environment AIRTABLE_API_KEY
+import { default as Airtable } from 'airtable';
 
 // create app and restrict general pathing
 const app = express();
@@ -301,53 +301,50 @@ app.post('/order/:subject', (req, res) => {
     }
 
     // if we've reached here, the basic checks have passed, send the data to the collection spreadsheet
-    let captureTime = Date.now();
-    let dataRows = order.map((entry) => {
-        let quantityMap = new Map<string, number>();
-        entry.packages.forEach(({name, quantity}) => quantityMap.set(name, quantity));
-        let packageColumns = PRESENTATION_CONFIG.packages.map((pkg) => quantityMap.get(pkg.name) || 0);
-
-        // data row is just the columns in order which are:
-        // - timestamp
-        // - subject id
-        // - image id
-        // - packages in site configuration order
-        return [
-            captureTime,
-            subject.id,
-            entry.id
-        ].concat(packageColumns);
-    });
-
-    const googlesheet = DATASOURCES_CONFIG.googlesheet;
-
-    const googleAuth = new google.auth.GoogleAuth({
-        credentials: googlesheet.auth,
-        scopes: ['https://www.googleapis.com/auth/spreadsheets']
-    });
-
-    const sheets = google.sheets({
-        version: 'v4',
-        auth: googleAuth
-    });
-
-    sheets.spreadsheets.values.append({
-            spreadsheetId: googlesheet.id,
-            range: googlesheet.ranges.submissions,
-            valueInputOption: 'USER_ENTERED',
-            requestBody: {
-                values: dataRows
+    const airtable = DATASOURCES_CONFIG.airtable;
+    let base = Airtable.base(airtable.base);
+    base(airtable.table.students.id)
+        .select({
+            view: "Complete",
+            filterByFormula: `{Site UUID} = '${subject.id}'`
+        })
+        .all()
+        .then((records) => {
+            if(records.length == 0 || records.length > 1) {
+                throw 'Failed to find matching student';
             }
-        }).then((data) => {
+            return records[0].id;
+        })
+        .then((studentRecord) => {
+            let entries = order.map((entry) => {
+                let quantityMap = new Map<string, number>();
+                entry.packages.forEach(({name, quantity}) => quantityMap.set(name, quantity));
+                let fields: any = {
+                    "Student Identifier": [studentRecord],
+                    "Image Name": entry.id
+                };
+                PRESENTATION_CONFIG.packages.map((pkg) => {
+                    fields[pkg.name] = quantityMap.get(pkg.name) || 0;
+                });
+                return {
+                    "fields": fields
+                };
+            });
+
+            return base(airtable.table.orders.id)
+                .create(entries);
+        })
+        .then((data) => {
             res.send({
                 success: true
             });
-        }).catch((err) => {
+        })
+        .catch((err) => {
             res.status(503).send({
                 success: false,
                 reason: 'Failure pushing data to storage'
             });
-        })
+        });
 });
 
 

@@ -9,13 +9,18 @@ declare interface OrderablePackageConfiguration {
 
 // datasources.json objects
 declare interface DatasourcesConfig {
-    googlesheet: {
-        id: string,
-        ranges: {
-            information: string,
-            submissions: string
-        },
-        auth: any // note we any here as the google auth config is opaque
+    airtable: {
+        base: string,
+        table: {
+            students: {
+                id: string,
+                viewPrepareImages: string,
+                viewComplete: string
+            },
+            orders: {
+                id: string
+            }
+        }
     },
     images: {
         directory: string
