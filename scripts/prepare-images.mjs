@@ -2,7 +2,12 @@ import * as process from 'node:process';
 import * as fs from 'node:fs/promises';
 import * as path from 'node:path';
 import { execSync } from 'node:child_process';
-import { google } from 'googleapis';
+
+import * as dotenv from 'dotenv';
+dotenv.config({ path: new URL("../config/.env", import.meta.url) });
+
+// note auth set via environment AIRTABLE_API_KEY
+import { default as Airtable } from 'airtable';
 
 // shim in require to get that sweet json parse
 import { createRequire } from 'node:module';
@@ -29,8 +34,8 @@ const require = createRequire(import.meta.url);
  * to all subjects. This year it will be copied all over, but next year
  * I'll explore cross-reference access, it just makes zips tricky.
  *
- * Secondarily this is tied to the structure of the Google Sheet where
- * I track the subjects, contacts, and photo orders. The google sheet
+ * Secondarily this is tied to the structure of the Airtable where
+ * I track the subjects, contacts, and photo orders. The airtable base
  * configuration is reused to get the subject data.
  *
  * Command Line execution:
@@ -61,39 +66,25 @@ const DIR_EXPORTS = path.join(DIR_BASE, "exports");
 const DIR_ARRANGED = path.join(DIR_BASE, "arranged");
 
 async function fetchSubjectData() {
-    // download subject information from the googlesheet
-    let { googlesheet } = require('../config/datasources');
-
-    const googleAuth = new google.auth.GoogleAuth({
-        credentials: googlesheet.auth,
-        scopes: ['https://www.googleapis.com/auth/spreadsheets']
-    });
-
-    const sheets = google.sheets({
-        version: 'v4',
-        auth: googleAuth
-    });
+    // download subject information from the airtable
+    let { airtable } = require('../config/datasources');
 
     try {
-        let query = await sheets.spreadsheets.values.get({
-            spreadsheetId: googlesheet.id,
-            range: googlesheet.ranges.information
-        });
+        let base = Airtable.base(airtable.base);
+        let records = await base(airtable.table.students.id)
+            .select({view: airtable.table.students.viewPrepareImages})
+            .all();
 
-        let values = query.data.values || [];
-        return values.map((row) => {
+        return records.map((record) => {
             return {
-                id: row[0],
-                folder: row[1],
-                name: {
-                    first: row[3],
-                    last: row[2]
-                },
-                group: row[4]
+                id: record.fields['Site UUID'],
+                folder: record.fields['Folder Name'],
+                name: record.fields['Student Full Name'],
+                group: record.fields['Class']
             }
         });
     } catch (err) {
-        console.error('Error thrown fetching subject information from Google Sheet:');
+        console.error('Error thrown fetching subject information from Airtable:');
         console.error(err);
     }
 
@@ -171,7 +162,7 @@ async function validateExports(subjects, base, excludeGroups = new Set()) {
         let issue = await validateSubject(subject, base);
         if(issue) {
             errors.push({
-                title: `Subject - ${subject.name.first} ${subject.name.last} - ${subject.group}`,
+                title: `Subject - ${subject.name} - ${subject.group}`,
                 issue: issue
             });
         }
@@ -263,11 +254,11 @@ async function arrangeForServer(subjects, sourceBase, targetBase, excludeGroups 
 
     for(let i = 0; i < subjects.length; i++) {
         let subject = subjects[i];
-        console.log(`    Arranging ${subject.id} - ${subject.name.first} ${subject.name.last}`);
+        console.log(`    Arranging ${subject.id} - ${subject.name}`);
         let error = await arrangeServerDirectory(subject, sourceBase, targetBase, excludeGroups);
         if(error) {
             errors.push({
-                title: `Subject - ${subject.name.first} ${subject.name.last} - ${subject.id}`,
+                title: `Subject - ${subject.name} - ${subject.id}`,
                 issue: error
             });
         }
@@ -284,7 +275,7 @@ if(subjects == null) {
     process.exit(1);
 }
 if(subjects.length == 0) {
-    console.error('No subject data found, spreadsheet reference likely wrong');
+    console.error('No subject data found, base reference likely wrong');
     process.exit(1);
 }
 
