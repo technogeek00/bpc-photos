@@ -70,7 +70,7 @@ async function generateToken(id) {
     let body = {
         token: process.env.GENERATION_SECRET,
         subject: id,
-        duration: 45 * 24 * 60 // token valid for 45 days
+        duration: 45 * 24 * 60 * 60 // token valid for 45 days
     };
 
     let response = await fetch(uri, {
