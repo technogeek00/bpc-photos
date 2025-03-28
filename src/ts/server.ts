@@ -310,7 +310,7 @@ app.post('/order/:subject', (req, res) => {
         })
         .all()
         .then((records) => {
-            if(records.length == 0 || records.length > 1) {
+            if(records.length == 0) {
                 throw 'Failed to find matching student';
             }
             return records[0].id;
